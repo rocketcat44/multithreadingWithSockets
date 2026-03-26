@@ -45,11 +45,14 @@ public class ChatServerWithThreads {
 
     private static class ConnectionHandler extends Thread {
         private static volatile ArrayList<ConnectionHandler> handlers = new ArrayList<ConnectionHandler>(); 
+        private static int nextClientId = 0;
+        private int clientId;
         Socket client;
         ObjectOutputStream oos;
         ObjectInputStream ois;
         ConnectionHandler(Socket socket) {
             client = socket;
+            this.clientId = ++nextClientId;
             try{
             oos = new ObjectOutputStream(client.getOutputStream());
             ois = new ObjectInputStream(client.getInputStream());
@@ -66,12 +69,12 @@ public class ChatServerWithThreads {
                 try {
                     String message = (String)ois.readObject();
                     if(!message.equals("disconnect")){
-                        System.out.println(message);
+                        System.out.println("Client " + clientId + ": " + message);
                         
                         synchronized (handlers) {
                             for (ConnectionHandler h : handlers){
                                 try{
-                                    h.oos.writeObject(message);
+                                    h.oos.writeObject("Client " + clientId + ": " + message);
                                     h.oos.flush();
                                 }
                                 catch (IOException e){
@@ -80,20 +83,20 @@ public class ChatServerWithThreads {
                         }
                     }
                     else{
-                        System.out.println("closing connection");
+                        System.out.println("Client " + clientId + " closing connection");
                         break;
                        
                     }
                 }
                 catch(EOFException e){
-                    System.out.println("client disconnected: " + clientAddress);
+                    System.out.println("Client " + clientId + " disconnected: " + clientAddress);
                     synchronized (handlers) {
                     handlers.remove(this);
                     }
                     break;
                 }
                 catch (Exception e){
-                    System.out.println("Error on connection with: "
+                    System.out.println("Error on connection with Client " + clientId + ": "
                             + clientAddress + ": " + e);
                 }
             }

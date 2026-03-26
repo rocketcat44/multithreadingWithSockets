@@ -14,8 +14,6 @@ import java.awt.event.WindowEvent;
 
 
 public class SocketClientExample {
-   
-   
     /*
      * Modify this example so that it opens a dialogue window using java swing,
      * takes in a user message and sends it
@@ -39,7 +37,6 @@ public class SocketClientExample {
             serverText.setEditable(false);
             clientText.setEditable(true);
 
-
             frame.setLayout(new BorderLayout());
             frame.setSize(400,400);
             frame.add(serverText, BorderLayout.CENTER);
@@ -58,8 +55,6 @@ public class SocketClientExample {
                 }
             });
 
-
-
             Thread t = new Thread(() -> {
                 boolean running = true;
                 while (running) {
@@ -73,10 +68,6 @@ public class SocketClientExample {
                 }
             });
             t.start();
-
-
-
-
 
             clientText.addActionListener(e -> {
             String input = clientText.getText();
